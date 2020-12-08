@@ -10,10 +10,11 @@ public class ParseHandTest {
 
     @Test
     void parseOneCard() {
-        Card card = CardParser.parseCard("5H");
+        Card card = new Card("5H");
         assertAll(
-                () -> assertEquals("5", card.rank()),
-                () -> assertEquals(Suite.HEART, card.suite())
+                () -> assertEquals('5', card.getRank().convertRankToChar()),
+                () -> assertEquals(Rank.FIVE, card.getRank()),
+                () -> assertEquals(Suite.HEARTS, card.getSuite())
         );
     }
 }
