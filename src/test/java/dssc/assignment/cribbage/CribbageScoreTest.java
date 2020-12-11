@@ -20,7 +20,7 @@ public class CribbageScoreTest {
             cardList.add(new Card(cardAsString));
         }
 
-        assertEquals(score,CribbageScore.scoreComputedAccordingToFifteenTwosRule(cardList));
+        assertEquals(score,CribbageScore.scoreComputedAccordingToTheRuleOfFifteenTwos(cardList));
     }
 
 }

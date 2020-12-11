@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 
 public class CribbageScore {
 
-    public static int scoreComputedAccordingToFifteenTwosRule(List<Card> cards) {
+    public static int scoreComputedAccordingToTheRuleOfFifteenTwos(List<Card> cards) {
         // two points for each separate combination of two or more cards totalling exactly
         //  fifteen (Jack, Queen and King count as 10, Ace count as 1)
 
