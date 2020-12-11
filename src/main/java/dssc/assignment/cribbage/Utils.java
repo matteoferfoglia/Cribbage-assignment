@@ -28,6 +28,33 @@ public class Utils {
         return permutations;
     }
 
+    public static<T> List<List<T>> findAllDistinctPermutationsOfNCards(final List<T> listToPermute,
+                                                                       final int NCards) {
+        // TODO refactor: duplication of code wrt findAllDistinctPermutations()
+
+        if(listToPermute==null)
+            throw new IllegalArgumentException("The given list cannot be null.");
+
+        List<T> listToPermute_localCopy = new LinkedList<>(listToPermute);
+        List<List<T>> permutations = new LinkedList<>();
+
+        if(listToPermute.size() == NCards)
+            permutations.add(listToPermute);
+
+        for(int i=0; i<listToPermute.size(); i++) {
+            List<T> listToExplore = new LinkedList<>(listToPermute_localCopy);
+
+            removeLastElementOfList_destructively(listToExplore);
+            for(List l : exploreListAndReturnPermutations(listToExplore))
+                if(l.size()==NCards)
+                    permutations.add(l);
+
+            Collections.rotate(listToPermute_localCopy,1);
+        }
+
+        return permutations;
+    }
+
     private static<T> List<List<T>> exploreListAndReturnPermutations(List<T> listToExplore){
         List<List<T>> permutations = new LinkedList<>();
 
@@ -66,6 +93,9 @@ public class Utils {
 
         LinkedList<Character> list2 = new LinkedList<>(); list2.add('A'); list2.add('B'); list2.add('C');
         printList(findAllDistinctPermutations(list2));
+
+        printList(findAllDistinctPermutationsOfNCards(list,3));
+        printList(findAllDistinctPermutationsOfNCards(list2,3));
     }
 
 }
