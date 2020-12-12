@@ -86,7 +86,7 @@ public class Utils {
     }
 
     public static<T> List<List<List<T>>> findAllDistinctPermutationsOfNCardsWithoutRepetition(List<T> listToPermuteWithoutRepetitions,
-                                                                                        int NCards) {
+                                                                                                int NCards) {
         if(listToPermuteWithoutRepetitions==null)
             throw new IllegalArgumentException("The given list cannot be null.");
 
@@ -127,6 +127,33 @@ public class Utils {
         }
 
         return permutationOfNCardsWithoutRepetitions;
+    }
+
+    public static void removeCards(List<Card> cardList, List<Card> cardsToRemove){
+        if(cardList==null)
+            throw new IllegalArgumentException("The given list of card cannot be null.");
+        if(cardsToRemove==null)
+            throw new IllegalArgumentException("The given list of card to remove cannot be null.");
+
+        for(Card card : cardsToRemove) {
+            if(!cardList.contains(card))
+                throw new RuntimeException("The given card list does not contain the cards you want to remove.");
+            cardList.remove(card);
+        }
+    }
+
+    public static boolean isARun(List<Card> cardList) {
+        List<Card> cardList_localCopy = new LinkedList<>(cardList);
+        Collections.sort(cardList_localCopy);
+
+        boolean isARun = true;
+        for(int i=0; i<cardList_localCopy.size()-1;i++){
+            Card aCard = cardList_localCopy.get(i);
+            Card otherCard = cardList_localCopy.get(i+1);
+            isARun = isARun && aCard.isOneRankFarFromThisCard(otherCard);
+        }
+
+        return isARun;
     }
 
     private static void removeFirstNElements(List list, int NElementsToRemove) {

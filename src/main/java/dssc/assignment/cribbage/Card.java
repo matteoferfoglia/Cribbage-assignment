@@ -1,6 +1,6 @@
 package dssc.assignment.cribbage;
 
-public class Card {
+public class Card implements Comparable<Card> {
 
     private final Rank rank;
     private final Suite suite;
@@ -46,5 +46,13 @@ public class Card {
     @Override
     public String toString() {
         return rank.toString() + suite.toString();
+    }
+
+    public int compareTo(Card aCard) {
+        return (int)Rank.convertRankToChar(rank) - (int)(Rank.convertRankToChar(aCard.getRank()));
+    }
+
+    public boolean isOneRankFarFromThisCard(Card otherCard){
+        return Math.abs(compareTo(otherCard)) == 1;
     }
 }
