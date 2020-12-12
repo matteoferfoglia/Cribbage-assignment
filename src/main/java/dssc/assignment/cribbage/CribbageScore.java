@@ -3,12 +3,11 @@ package dssc.assignment.cribbage;
 import java.util.*;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 
 public class CribbageScore {
 
-    public static int scoreComputedAccordingToTheRuleOfFifteenTwos(List<Card> cards) {
+    public static int scoreComputedAccordingToTheRuleOfFifteenTwos(ListOfCards cards) {
         // two points for each separate combination of two or more cards totalling exactly
         //  fifteen (Jack, Queen and King count as 10, Ace count as 1)
 
@@ -57,9 +56,10 @@ public class CribbageScore {
 
     }
 
-    public static int scoreComputedAccordingToTheRuleOfRuns(List<Card> cardList) {
+    public static int scoreComputedAccordingToTheRuleOfRuns(ListOfCards cardList) {
 
         // TODO refactor: you may use a recursive function
+        // TODO refactor: code smells: long class and duplication of code
 
         final int scoreWithARunOfThreeConsecutiveCards = 3 ;  //three points for a run of three consecutive cards (regardless of suit)
         final int scoreWithARunOfFourConsecutiveCards = 4;  //four points for a run of four
@@ -68,31 +68,31 @@ public class CribbageScore {
         List<Integer> possibleScores = new ArrayList<>();
 
         // Try with all possible combinations: the score is the one with max value
-        for(List<List<Card>> aPermutationOf3ConsecutiveCardsWithoutRepetition : getAllPermutationsOfNConsecutiveCardsWithoutRepetition(cardList, 3)) {
+        for(List<ListOfCards> aPermutationOf3ConsecutiveCardsWithoutRepetition : cardList.getAllPermutationsOfNConsecutiveCardsWithoutRepetition( 3)) {
 
             int howManyRunsOf3InThisPermutation = 0;
-            for (List<Card> aRunOfThreeConsecutiveCards : aPermutationOf3ConsecutiveCardsWithoutRepetition) {
+            for (ListOfCards aRunOfThreeConsecutiveCards : aPermutationOf3ConsecutiveCardsWithoutRepetition) {
 
                 howManyRunsOf3InThisPermutation ++ ;
-                List<Card> cardList_localCopyForRuleOfThreeConsecutiveCards = new ArrayList<>(cardList);
-                Utils.removeCards(cardList_localCopyForRuleOfThreeConsecutiveCards, aRunOfThreeConsecutiveCards);
+                ListOfCards cardList_localCopyForRuleOfThreeConsecutiveCards = new ListOfCards(cardList);
+                cardList_localCopyForRuleOfThreeConsecutiveCards.removeCards(aRunOfThreeConsecutiveCards);
 
-                List<List<List<Card>>> allPermutationsOf4ConsecutiveCardsWithoutRepetition = getAllPermutationsOfNConsecutiveCardsWithoutRepetition(cardList_localCopyForRuleOfThreeConsecutiveCards, 4);
+                List<List<ListOfCards>> allPermutationsOf4ConsecutiveCardsWithoutRepetition = cardList_localCopyForRuleOfThreeConsecutiveCards.getAllPermutationsOfNConsecutiveCardsWithoutRepetition(4);
 
-                for (List<List<Card>> aPermutationOf4 : allPermutationsOf4ConsecutiveCardsWithoutRepetition) {
+                for (List<ListOfCards> aPermutationOf4 : allPermutationsOf4ConsecutiveCardsWithoutRepetition) {
 
                     int howManyRunsOf4InThisPermutation = 0;
-                    for (List<Card> aRunOfFourConsecutiveCards : aPermutationOf4) {
+                    for (ListOfCards aRunOfFourConsecutiveCards : aPermutationOf4) {
                         howManyRunsOf4InThisPermutation ++ ;
 
-                        List<Card> cardList_localCopyForRuleOfFourConsecutiveCards = new ArrayList<>(cardList_localCopyForRuleOfThreeConsecutiveCards);
-                        Utils.removeCards(cardList_localCopyForRuleOfFourConsecutiveCards, aRunOfFourConsecutiveCards);
+                        ListOfCards cardList_localCopyForRuleOfFourConsecutiveCards = new ListOfCards(cardList_localCopyForRuleOfThreeConsecutiveCards);
+                        cardList_localCopyForRuleOfFourConsecutiveCards.removeCards(aRunOfFourConsecutiveCards);
 
-                        List<List<List<Card>>> allPermutationsOf5ConsecutiveCardsWithoutRepetition = getAllPermutationsOfNConsecutiveCardsWithoutRepetition(cardList_localCopyForRuleOfFourConsecutiveCards, 5);
+                        List<List<ListOfCards>> allPermutationsOf5ConsecutiveCardsWithoutRepetition = cardList_localCopyForRuleOfFourConsecutiveCards.getAllPermutationsOfNConsecutiveCardsWithoutRepetition(5);
 
-                        for (List<List<Card>> aPermutationOf5 : allPermutationsOf5ConsecutiveCardsWithoutRepetition) {
+                        for (List<ListOfCards> aPermutationOf5 : allPermutationsOf5ConsecutiveCardsWithoutRepetition) {
                             int howManyRunsOf5InThisPermutation = 0;
-                            for (List<Card> aRunOfFiveConsecutiveCards : aPermutationOf5) {
+                            for (ListOfCards aRunOfFiveConsecutiveCards : aPermutationOf5) {
                                 howManyRunsOf5InThisPermutation ++ ;
                             }
                             possibleScores.add(scoreWithARunOfFiveConsecutiveCards*howManyRunsOf5InThisPermutation + scoreWithARunOfFourConsecutiveCards*howManyRunsOf4InThisPermutation + scoreWithARunOfThreeConsecutiveCards*howManyRunsOf3InThisPermutation);
@@ -116,21 +116,21 @@ public class CribbageScore {
 
 
         // ----------------------------- Without considering runs of 3 cards
-        for(List<List<Card>> aPermutationOf4ConsecutiveCardsWithoutRepetition : getAllPermutationsOfNConsecutiveCardsWithoutRepetition(cardList, 4)) {
+        for(List<ListOfCards> aPermutationOf4ConsecutiveCardsWithoutRepetition : cardList.getAllPermutationsOfNConsecutiveCardsWithoutRepetition( 4)) {
 
             int howManyRunsOf4InThisPermutation = 0;
-            for (List<Card> aRunOfFourConsecutiveCards : aPermutationOf4ConsecutiveCardsWithoutRepetition) {
+            for (ListOfCards aRunOfFourConsecutiveCards : aPermutationOf4ConsecutiveCardsWithoutRepetition) {
 
                 howManyRunsOf4InThisPermutation ++ ;
-                List<Card> cardList_localCopyForRuleOfFourConsecutiveCards = new ArrayList<>(cardList);
-                Utils.removeCards(cardList_localCopyForRuleOfFourConsecutiveCards, aRunOfFourConsecutiveCards);
+                ListOfCards cardList_localCopyForRuleOfFourConsecutiveCards = new ListOfCards(cardList);
+                cardList_localCopyForRuleOfFourConsecutiveCards.removeCards(aRunOfFourConsecutiveCards);
 
-                List<List<List<Card>>> allPermutationsOf5ConsecutiveCardsWithoutRepetition = getAllPermutationsOfNConsecutiveCardsWithoutRepetition(cardList_localCopyForRuleOfFourConsecutiveCards, 5);
+                List<List<ListOfCards>> allPermutationsOf5ConsecutiveCardsWithoutRepetition = cardList_localCopyForRuleOfFourConsecutiveCards.getAllPermutationsOfNConsecutiveCardsWithoutRepetition(5);
 
-                for (List<List<Card>> aPermutationOf5 : allPermutationsOf5ConsecutiveCardsWithoutRepetition) {
+                for (List<ListOfCards> aPermutationOf5 : allPermutationsOf5ConsecutiveCardsWithoutRepetition) {
 
                     int howManyRunsOf5InThisPermutation = 0;
-                    for (List<Card> aRunOfFiveConsecutiveCards : aPermutationOf5) {
+                    for (ListOfCards aRunOfFiveConsecutiveCards : aPermutationOf5) {
                         howManyRunsOf5InThisPermutation ++ ;
                     }
                     possibleScores.add(scoreWithARunOfFiveConsecutiveCards*howManyRunsOf5InThisPermutation + scoreWithARunOfFourConsecutiveCards*howManyRunsOf4InThisPermutation);
@@ -151,10 +151,10 @@ public class CribbageScore {
 
 
         // ----------------------------- Without considering runs neither of 3 nor of 4 cards
-        for(List<List<Card>> aPermutationOf5ConsecutiveCardsWithoutRepetition : getAllPermutationsOfNConsecutiveCardsWithoutRepetition(cardList, 5)) {
+        for(List<ListOfCards> aPermutationOf5ConsecutiveCardsWithoutRepetition : cardList.getAllPermutationsOfNConsecutiveCardsWithoutRepetition( 5)) {
 
             int howManyRunsOf5InThisPermutation = 0;
-            for (List<Card> aRunOfFiveConsecutiveCards : aPermutationOf5ConsecutiveCardsWithoutRepetition) {
+            for (ListOfCards aRunOfFiveConsecutiveCards : aPermutationOf5ConsecutiveCardsWithoutRepetition) {
                 howManyRunsOf5InThisPermutation ++ ;
             }
             possibleScores.add(scoreWithARunOfFiveConsecutiveCards*howManyRunsOf5InThisPermutation);
@@ -176,28 +176,6 @@ public class CribbageScore {
 
         return scoreAccordingToThisRule ;
 
-    }
-
-    // returns a list of permutation
-    private static List<List<List<Card>>> getAllPermutationsOfNConsecutiveCardsWithoutRepetition(List<Card> cards, int NCards) {
-        List<List<List<Card>>> listOfPermutationsOfCards = Utils.findAllDistinctPermutationsOfNCardsWithoutRepetition(cards, NCards);
-
-        List<List<List<Card>>> listOfPermutationsWhichCorrespondsToDistinctRuns = new ArrayList<>();
-
-        for(List<List<Card>> aPermutation : listOfPermutationsOfCards) {
-
-            List<List<Card>> cardListWhichAreARunInThisPermutation = new ArrayList<>();
-
-            for(List<Card> possibleRun : aPermutation) {
-                if (Utils.isARun(possibleRun))
-                    cardListWhichAreARunInThisPermutation.add(possibleRun);
-            }
-
-            if(!cardListWhichAreARunInThisPermutation.isEmpty())
-                listOfPermutationsWhichCorrespondsToDistinctRuns.add(cardListWhichAreARunInThisPermutation);
-        }
-
-        return listOfPermutationsWhichCorrespondsToDistinctRuns;
     }
 
 }

@@ -28,8 +28,8 @@ public class Utils {
         return permutations;
     }
 
-    public static<T> List<List<T>> findAllDistinctPermutationsOfNCards(List<T> listToPermute,
-                                                                       int NCards) {
+    public static<T> List<List<T>> findAllDistinctPermutationsOfNElements(List<T> listToPermute,
+                                                                          int NElements) {
         // TODO refactor: duplication of code wrt findAllDistinctPermutations()
 
         if(listToPermute==null)
@@ -38,7 +38,7 @@ public class Utils {
         List<T> listToPermute_localCopy = new LinkedList<>(listToPermute);
         List<List<T>> permutations = new LinkedList<>();
 
-        if(listToPermute.size() == NCards)
+        if(listToPermute.size() == NElements)
             permutations.add(listToPermute);
 
         for(int i=0; i<listToPermute.size(); i++) {
@@ -46,7 +46,7 @@ public class Utils {
 
             removeLastElementOfList_destructively(listToExplore);
             for(List l : exploreListAndReturnPermutations(listToExplore))
-                if(l.size()==NCards)
+                if(l.size()==NElements)
                     permutations.add(l);
 
             Collections.rotate(listToPermute_localCopy,1);
@@ -85,75 +85,48 @@ public class Utils {
             System.out.print(val);
     }
 
-    public static<T> List<List<List<T>>> findAllDistinctPermutationsOfNCardsWithoutRepetition(List<T> listToPermuteWithoutRepetitions,
-                                                                                                int NCards) {
+    public static<T> List<List<List<T>>> findAllDistinctPermutationsOfNElementsWithoutRepetition(List<T> listToPermuteWithoutRepetitions,
+                                                                                                 int NElements) {
         if(listToPermuteWithoutRepetitions==null)
             throw new IllegalArgumentException("The given list cannot be null.");
 
-        List<List<List<T>>> permutationOfNCardsWithoutRepetitions = new LinkedList<>();
+        List<List<List<T>>> permutationOfNElementsWithoutRepetitions = new LinkedList<>();
         List<T> listToPermuteWithoutRepetitions_localCopy = new LinkedList<>(listToPermuteWithoutRepetitions);
 
         // TODO: refactor, this method is very inefficient
-        if(listToPermuteWithoutRepetitions.size()==NCards) {
+        if(listToPermuteWithoutRepetitions.size()==NElements) {
             List<List<T>> wrapperListOfPermutations =  new LinkedList<List<T>>();
             wrapperListOfPermutations.add(listToPermuteWithoutRepetitions);
-            permutationOfNCardsWithoutRepetitions.add(wrapperListOfPermutations);
+            permutationOfNElementsWithoutRepetitions.add(wrapperListOfPermutations);
         } else {
 
             for(int i=0; i<listToPermuteWithoutRepetitions_localCopy.size(); i++) {
 
                 List<T> listToPermuteWithoutRepetitions_localCopy_inner = new LinkedList<>(listToPermuteWithoutRepetitions_localCopy);
-                List<List<T>> permutationOfNCardsWithoutRepetitions_inner = new LinkedList<>();
+                List<List<T>> permutationOfNElementsWithoutRepetitions_inner = new LinkedList<>();
 
                 for( ;
-                     listToPermuteWithoutRepetitions_localCopy_inner.size() >= NCards;
-                     removeFirstNElements(listToPermuteWithoutRepetitions_localCopy_inner,NCards)) {
+                     listToPermuteWithoutRepetitions_localCopy_inner.size() >= NElements;
+                     removeFirstNElements(listToPermuteWithoutRepetitions_localCopy_inner,NElements)) {
 
                     List<List<T>> allPermutations = exploreListAndReturnPermutations(new LinkedList<>(listToPermuteWithoutRepetitions_localCopy_inner));
 
                     for (List<T> permutation : allPermutations) {
-                        if (permutation.size() == NCards) {
-                            permutationOfNCardsWithoutRepetitions_inner.add(permutation);
+                        if (permutation.size() == NElements) {
+                            permutationOfNElementsWithoutRepetitions_inner.add(permutation);
                         }
                     }
 
                 }
 
-                permutationOfNCardsWithoutRepetitions.add(permutationOfNCardsWithoutRepetitions_inner);
+                permutationOfNElementsWithoutRepetitions.add(permutationOfNElementsWithoutRepetitions_inner);
                 Collections.rotate(listToPermuteWithoutRepetitions_localCopy,1);
 
             }
 
         }
 
-        return permutationOfNCardsWithoutRepetitions;
-    }
-
-    public static void removeCards(List<Card> cardList, List<Card> cardsToRemove){
-        if(cardList==null)
-            throw new IllegalArgumentException("The given list of card cannot be null.");
-        if(cardsToRemove==null)
-            throw new IllegalArgumentException("The given list of card to remove cannot be null.");
-
-        for(Card card : cardsToRemove) {
-            if(!cardList.contains(card))
-                throw new RuntimeException("The given card list does not contain the cards you want to remove.");
-            cardList.remove(card);
-        }
-    }
-
-    public static boolean isARun(List<Card> cardList) {
-        List<Card> cardList_localCopy = new LinkedList<>(cardList);
-        Collections.sort(cardList_localCopy);
-
-        boolean isARun = true;
-        for(int i=0; i<cardList_localCopy.size()-1;i++){
-            Card aCard = cardList_localCopy.get(i);
-            Card otherCard = cardList_localCopy.get(i+1);
-            isARun = isARun && aCard.isOneRankFarFromThisCard(otherCard);
-        }
-
-        return isARun;
+        return permutationOfNElementsWithoutRepetitions;
     }
 
     private static void removeFirstNElements(List list, int NElementsToRemove) {
@@ -196,21 +169,21 @@ public class Utils {
 
         System.out.println(); System.out.println();
 
-        printList(findAllDistinctPermutationsOfNCards(list,3));
+        printList(findAllDistinctPermutationsOfNElements(list,3));
         System.out.println();
-        printList(findAllDistinctPermutationsOfNCards(list2,3));
+        printList(findAllDistinctPermutationsOfNElements(list2,3));
 
         System.out.println(); System.out.println();
 
-        printListOfList(findAllDistinctPermutationsOfNCardsWithoutRepetition(list,2));
+        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list,2));
         System.out.println();
-        printListOfList(findAllDistinctPermutationsOfNCardsWithoutRepetition(list,3));
+        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list,3));
 
         System.out.println(); System.out.println();
 
-        printListOfList(findAllDistinctPermutationsOfNCardsWithoutRepetition(list2,2));
+        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list2,2));
         System.out.println();
-        printListOfList(findAllDistinctPermutationsOfNCardsWithoutRepetition(list2,3));
+        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list2,3));
 
     }
 
