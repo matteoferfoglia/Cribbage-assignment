@@ -12,12 +12,12 @@ public class ListOfCards implements List<Card> {
         this.cardList = new ArrayList<>(cardList);
     }
 
-    public ListOfCards(){
-        this.cardList = new ArrayList<>();
-    }
-
     public ListOfCards(int howManyCards){
         this.cardList = new ArrayList<>(howManyCards);
+    }
+
+    public ListOfCards(){
+        this(0);
     }
 
     public boolean isARun() {
@@ -34,19 +34,12 @@ public class ListOfCards implements List<Card> {
         return isARun;
     }
 
-    List<List<ListOfCards>> findAllDistinctPermutationsOfNElementsWithoutRepetition(int NCards){
+    List<Permutation<Card>> findAllDistinctPermutationsOfNElementsWithoutRepetition(int NCards){
 
-        List<List<List<Card>>> listOfAllPermutations = Utils.findAllDistinctPermutationsOfNElementsWithoutRepetition(cardList,NCards);
-        List<List<ListOfCards>> listOfAllPermutations_afterCasting = new ArrayList<>();
+        // TODO refactor  (this method could belong to the class Permutation)
 
-        for(List<List<Card>> aPermutation : listOfAllPermutations) {
-            List<ListOfCards> aPermutation_afterCasting = new ArrayList<>();
-            for(List<Card> aListOfCards : aPermutation)
-                aPermutation_afterCasting.add(castToThisClass(aListOfCards));
-            listOfAllPermutations_afterCasting.add(aPermutation_afterCasting);
-        }
-
-        return listOfAllPermutations_afterCasting;
+        List<Permutation<Card>> listOfAllPermutations = Utils.findAllDistinctPermutationsOfNElementsWithoutRepetition(cardList,NCards);
+        return listOfAllPermutations;
     }
 
     public static ListOfCards castToThisClass(List<Card> cardListToCast){
@@ -69,24 +62,35 @@ public class ListOfCards implements List<Card> {
         return this;
     }
 
+    public static List<ListOfCards> convertPermutationToListOfListOfCards(Permutation<Card> permutation){
+        if(permutation==null)
+            throw new NullPointerException("The given permutation cannot be null.");
+
+        List<ListOfCards> afterConversion = new ArrayList<>();
+        for (List<Card> list : permutation)
+            afterConversion.add(new ListOfCards(list));
+
+        return afterConversion;
+    }
+
     // returns a list of permutation
-    public List<List<ListOfCards>> getAllPermutationsOfNConsecutiveCardsWithoutRepetition(int LengthOfTheListOfCardsInThePermutation) {
+    public List<Permutation<Card>> getAllPermutationsOfNConsecutiveCardsWithoutRepetition(int LengthOfTheListOfCardsInThePermutation) {
 
-        List<List<ListOfCards>> listOfPermutationsOfCards = findAllDistinctPermutationsOfNElementsWithoutRepetition(LengthOfTheListOfCardsInThePermutation);
+        List<Permutation<Card>> listOfPermutationsOfCards = findAllDistinctPermutationsOfNElementsWithoutRepetition(LengthOfTheListOfCardsInThePermutation);
 
-        List<List<ListOfCards>> listOfPermutationsWhichCorrespondsToDistinctRuns = new ArrayList<>();
+        List<Permutation<Card>> listOfPermutationsWhichCorrespondsToDistinctRuns = new ArrayList<>();
 
-        for(List<ListOfCards> aPermutation : listOfPermutationsOfCards) {
+        for(Permutation<Card> aPermutation : listOfPermutationsOfCards) {
 
-            List<ListOfCards> cardListWhichAreARunInThisPermutation = new ArrayList<>();
+            Permutation<Card> permutationWhichIsARunInThisPermutation = new Permutation<>();
 
-            for(ListOfCards possibleRun : aPermutation) {
+            for(ListOfCards possibleRun : ListOfCards.convertPermutationToListOfListOfCards(aPermutation)) {
                 if (possibleRun.isARun())
-                    cardListWhichAreARunInThisPermutation.add(possibleRun);
+                    permutationWhichIsARunInThisPermutation.add(possibleRun);
             }
 
-            if(!cardListWhichAreARunInThisPermutation.isEmpty())
-                listOfPermutationsWhichCorrespondsToDistinctRuns.add(cardListWhichAreARunInThisPermutation);
+            if(!permutationWhichIsARunInThisPermutation.isEmpty())
+                listOfPermutationsWhichCorrespondsToDistinctRuns.add(permutationWhichIsARunInThisPermutation);
         }
 
         return listOfPermutationsWhichCorrespondsToDistinctRuns;

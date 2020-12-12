@@ -1,34 +1,35 @@
 package dssc.assignment.cribbage;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Utils {
 
-    public static<T> List<List<T>> findAllDistinctPermutations(List<T> listToPermute) {
+    public static<T> Permutation<T> findAllDistinctPermutations(List<T> listToPermute) {
 
         if(listToPermute==null)
             throw new IllegalArgumentException("The given list cannot be null.");
 
         List<T> listToPermute_localCopy = new LinkedList<>(listToPermute);
-        List<List<T>> permutations = new LinkedList<>();
+        Permutation permutation = new Permutation();
 
-        permutations.add(listToPermute);
+        permutation.add(listToPermute);
 
         for(int i=0; i<listToPermute.size(); i++) {
             List<T> listToExplore = new LinkedList<>(listToPermute_localCopy);
 
             removeLastElementOfList_destructively(listToExplore);
-            permutations.addAll(exploreListAndReturnPermutations(listToExplore));
+            permutation.addAll(exploreListAndReturnPermutations(listToExplore));
 
             Collections.rotate(listToPermute_localCopy,1);
         }
 
-        return permutations;
+        return permutation;
     }
 
-    public static<T> List<List<T>> findAllDistinctPermutationsOfNElements(List<T> listToPermute,
+    public static<T> Permutation<T> findAllDistinctPermutationsOfNElements(List<T> listToPermute,
                                                                           int NElements) {
         // TODO refactor: duplication of code wrt findAllDistinctPermutations()
 
@@ -36,10 +37,10 @@ public class Utils {
             throw new IllegalArgumentException("The given list cannot be null.");
 
         List<T> listToPermute_localCopy = new LinkedList<>(listToPermute);
-        List<List<T>> permutations = new LinkedList<>();
+        Permutation<T> permutation = new Permutation<>();
 
         if(listToPermute.size() == NElements)
-            permutations.add(listToPermute);
+            permutation.add(listToPermute);
 
         for(int i=0; i<listToPermute.size(); i++) {
             List<T> listToExplore = new LinkedList<>(listToPermute_localCopy);
@@ -47,25 +48,25 @@ public class Utils {
             removeLastElementOfList_destructively(listToExplore);
             for(List l : exploreListAndReturnPermutations(listToExplore))
                 if(l.size()==NElements)
-                    permutations.add(l);
+                    permutation.add(l);
 
             Collections.rotate(listToPermute_localCopy,1);
         }
 
-        return permutations;
+        return permutation;
     }
 
-    private static<T> List<List<T>> exploreListAndReturnPermutations(List<T> listToExplore){
-        List<List<T>> permutations = new LinkedList<>();
+    private static<T> Permutation<T> exploreListAndReturnPermutations(List<T> listToExplore){
+        Permutation<T> permutations = new Permutation<>();
 
         if(listToExplore.size() > 0) {
 
             permutations.add(new LinkedList<>(listToExplore));
 
             removeLastElementOfList_destructively(listToExplore);
-            for (List<T> permutation : exploreListAndReturnPermutations(listToExplore)) {
-                if(permutation.size()>0) {
-                    permutations.add(permutation);
+            for (List<T> aListOfThePermutation : exploreListAndReturnPermutations(listToExplore)) {
+                if(aListOfThePermutation.size()>0) {
+                    permutations.add(aListOfThePermutation);
                 }
             }
 
@@ -85,17 +86,17 @@ public class Utils {
             System.out.print(val);
     }
 
-    public static<T> List<List<List<T>>> findAllDistinctPermutationsOfNElementsWithoutRepetition(List<T> listToPermuteWithoutRepetitions,
+    public static<T> List<Permutation<T>> findAllDistinctPermutationsOfNElementsWithoutRepetition(List<T> listToPermuteWithoutRepetitions,
                                                                                                  int NElements) {
         if(listToPermuteWithoutRepetitions==null)
             throw new IllegalArgumentException("The given list cannot be null.");
 
-        List<List<List<T>>> permutationOfNElementsWithoutRepetitions = new LinkedList<>();
-        List<T> listToPermuteWithoutRepetitions_localCopy = new LinkedList<>(listToPermuteWithoutRepetitions);
+        List<Permutation<T>> permutationOfNElementsWithoutRepetitions = new ArrayList<>();
+        List<T> listToPermuteWithoutRepetitions_localCopy = new ArrayList<>(listToPermuteWithoutRepetitions);
 
         // TODO: refactor, this method is very inefficient
         if(listToPermuteWithoutRepetitions.size()==NElements) {
-            List<List<T>> wrapperListOfPermutations =  new LinkedList<List<T>>();
+            Permutation<T> wrapperListOfPermutations =  new Permutation<T>();
             wrapperListOfPermutations.add(listToPermuteWithoutRepetitions);
             permutationOfNElementsWithoutRepetitions.add(wrapperListOfPermutations);
         } else {
@@ -103,17 +104,17 @@ public class Utils {
             for(int i=0; i<listToPermuteWithoutRepetitions_localCopy.size(); i++) {
 
                 List<T> listToPermuteWithoutRepetitions_localCopy_inner = new LinkedList<>(listToPermuteWithoutRepetitions_localCopy);
-                List<List<T>> permutationOfNElementsWithoutRepetitions_inner = new LinkedList<>();
+                Permutation<T> permutationOfNElementsWithoutRepetitions_inner = new Permutation<>();
 
                 for( ;
                      listToPermuteWithoutRepetitions_localCopy_inner.size() >= NElements;
                      removeFirstNElements(listToPermuteWithoutRepetitions_localCopy_inner,NElements)) {
 
-                    List<List<T>> allPermutations = exploreListAndReturnPermutations(new LinkedList<>(listToPermuteWithoutRepetitions_localCopy_inner));
+                    Permutation<T> aPermutation = exploreListAndReturnPermutations(new ArrayList<>(listToPermuteWithoutRepetitions_localCopy_inner));
 
-                    for (List<T> permutation : allPermutations) {
-                        if (permutation.size() == NElements) {
-                            permutationOfNElementsWithoutRepetitions_inner.add(permutation);
+                    for (List<T> listOfThePermutation : aPermutation) {
+                        if (listOfThePermutation.size() == NElements) {
+                            permutationOfNElementsWithoutRepetitions_inner.add(listOfThePermutation);
                         }
                     }
 
@@ -144,18 +145,6 @@ public class Utils {
         }
     }
 
-    public static<T> void printListOfList(List<List<T>> list) {
-
-        System.out.println("<");
-        for (List l : list) {
-            System.out.print("\t<");
-            printList(l);
-            System.out.println(">");
-        }
-        System.out.println(">");
-
-    }
-
 
     // Examples
     public static void main(String[] strings){
@@ -175,15 +164,15 @@ public class Utils {
 
         System.out.println(); System.out.println();
 
-        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list,2));
+        System.out.println((ListOfListOfElements)findAllDistinctPermutationsOfNElementsWithoutRepetition(list,2));
         System.out.println();
-        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list,3));
+        System.out.println((ListOfListOfElements)findAllDistinctPermutationsOfNElementsWithoutRepetition(list,3));
 
         System.out.println(); System.out.println();
 
-        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list2,2));
+        System.out.println((ListOfListOfElements)findAllDistinctPermutationsOfNElementsWithoutRepetition(list2,2));
         System.out.println();
-        printListOfList(findAllDistinctPermutationsOfNElementsWithoutRepetition(list2,3));
+        System.out.println((ListOfListOfElements)findAllDistinctPermutationsOfNElementsWithoutRepetition(list2,3));
 
     }
 
